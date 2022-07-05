@@ -1,6 +1,7 @@
 import pywifi 
 import time
 import pyttsx3
+import webbrowser
 import datetime
 import wikipedia
 import speech_recognition as sr
@@ -52,3 +53,12 @@ if __name__ == "__main__":
     wishme()
     while True:
         query = takecommand().lower()
+        
+        if "wikipedia" in query:
+            speak("[+] seraching wiki ...")
+            query = query.replace("wikipedia","")
+            results = wikipedia.sumary(query,sentences=2)
+            speak(results)
+            
+        elif "open youtube" in query:
+            webbrowser.open("youtube.com")
