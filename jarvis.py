@@ -7,10 +7,10 @@ import wikipedia
 import speech_recognition as sr
 import socket
 
-engine = pyttsx3.init('espeak')
+engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 # print(voices[3].id)
-engine.setProperty('voice',voices[3].id)
+engine.setProperty('voice',voices[0].id)
 
 def speak(audio):
     engine.say(audio)
