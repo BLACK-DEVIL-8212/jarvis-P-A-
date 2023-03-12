@@ -1,3 +1,4 @@
+import os
 import pywifi 
 import time
 import pyttsx3
@@ -7,12 +8,11 @@ import wikipedia
 import speech_recognition as sr
 import socket
 import smtplib
-#import gyro
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
-# print(voices[0].id)
-engine.setProperty('voice',voices[0].id)
+print(voices[1].id)
+engine.setProperty('voice',voices[1].id)
 
 def speak(audio):
     engine.say(audio)
@@ -35,7 +35,7 @@ def takecommand():
     mic = sr.Microphone()
     with mic as source:
         print("[+] LISTENING ... ")
-        r.pause_threshold = 2
+        r.pause_threshold = 1
         r.energy_threshold = 0
         audio = sr.Recognizer().listen(source)
     
@@ -84,5 +84,12 @@ if __name__ == "__main__":
         elif "bring drone to me" in query:
             socket.socket.setblocking(True)
             socket.create_connection("169.254.122.76")
+        
         elif "make connection to server 1" in query:
             socket_conn_1()
+        
+        elif "play a music" in query:
+            webbrowser.open("https://youtu.be/3iR-g-bYEYI")
+        
+        elif "jarvis quit" in query:
+            break
