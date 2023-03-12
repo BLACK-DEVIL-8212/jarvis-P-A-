@@ -6,10 +6,12 @@ import datetime
 import wikipedia
 import speech_recognition as sr
 import socket
+import smtplib
+#import gyro
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
-# print(voices[3].id)
+# print(voices[0].id)
 engine.setProperty('voice',voices[0].id)
 
 def speak(audio):
@@ -30,14 +32,15 @@ def wishme():
 
 def takecommand():
     r = sr.Recognizer()
-    with sr.Microphone() as source:
-        speak("[+] LISTENING ... ")
-        r.pause_threshold = 1
-        r.energy_threshold = 12 
-        audio = r.listen(source)
+    mic = sr.Microphone()
+    with mic as source:
+        print("[+] LISTENING ... ")
+        r.pause_threshold = 2
+        r.energy_threshold = 0
+        audio = sr.Recognizer().listen(source)
     
     try:
-        speak("[+] RECOGNIZING ...")
+        print("[+] RECOGNIZING ...")
         query = r.recognize_google(audio, language='en-in')
         print(f"blackdevil:~ {query}\n")
 
@@ -47,7 +50,16 @@ def takecommand():
 
     return query
 
+def socket_conn_1():
+    socket1 = smtplib.SMTP('smtp.google.com',587)
+    socket1.ehlo()
+    socket1.starttls()
+    username1 = input("[+] enter your email : ")
+    passwd1 = input("[+] enter your password : ")
+    log1 = socket1.login(username1,passwd1)
 
+def hrcx():
+    pass
 
 if __name__ == "__main__":
     wishme()
@@ -59,6 +71,18 @@ if __name__ == "__main__":
             query = query.replace("wikipedia","")
             results = wikipedia.sumary(query,sentences=2)
             speak(results)
-            
+
+        elif "hello jarvis" in query:
+            speak("pleasure meeting you sir")
+
         elif "open youtube" in query:
             webbrowser.open("youtube.com")
+
+        elif "open google" in query:
+            webbrowser.open("google.com")
+        
+        elif "bring drone to me" in query:
+            socket.socket.setblocking(True)
+            socket.create_connection("169.254.122.76")
+        elif "make connection to server 1" in query:
+            socket_conn_1()
