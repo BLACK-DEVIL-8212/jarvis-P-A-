@@ -9,6 +9,8 @@ import speech_recognition as sr
 import socket
 import smtplib
 
+from geopy.geocoders import Nominatim
+
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 print(voices[1].id)
@@ -59,7 +61,32 @@ def socket_conn_1():
     log1 = socket1.login(username1,passwd1)
 
 def hrcx():
-    pass
+    HOST = 'localhost'
+    PORT = 8000
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, PORT))
+        s.listen()
+        print(f"Server listening on port {PORT}")
+        conn, addr = s.accept()
+        with conn:
+            print(f"Connected by {addr}")
+            while True:
+                data = conn.recv(1024)
+                if not data:
+                    break
+                conn.sendall(data)
+
+def track_location():
+    address = input("Enter address: ")
+
+    geolocator = Nominatim(user_agent="location_tracker")
+    location = geolocator.geocode(address)
+
+    if location is not None:
+        print(f"Latitude: {location.latitude}, Longitude: {location.longitude}")
+    else:
+        print("Location not found.")
 
 if __name__ == "__main__":
     wishme()
@@ -91,5 +118,11 @@ if __name__ == "__main__":
         elif "play a music" in query:
             webbrowser.open("https://youtu.be/3iR-g-bYEYI")
         
+        elif "open porn" in query:
+            webbrowser.open("t.me/pornhub8756")
+        
+        elif"connect to server" in query:
+            hrcx()
+            
         elif "jarvis quit" in query:
             break
