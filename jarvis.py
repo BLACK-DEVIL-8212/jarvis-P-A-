@@ -1,4 +1,4 @@
-import os
+import os ,sys, hashlib
 import pywifi 
 import time
 import pyttsx3
@@ -6,15 +6,15 @@ import webbrowser
 import datetime
 import wikipedia
 import speech_recognition as sr
-import socket
-import smtplib
-
+import socket,smtplib
+import time
 from geopy.geocoders import Nominatim
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
-print(voices[1].id)
+#print(voices[1].id)
 engine.setProperty('voice',voices[1].id)
+os.cpu_count()
 
 def speak(audio):
     engine.say(audio)
@@ -37,8 +37,8 @@ def takecommand():
     mic = sr.Microphone()
     with mic as source:
         print("[+] LISTENING ... ")
-        r.pause_threshold = 1
-        r.energy_threshold = 0
+        r.pause_threshold = 0
+        r.energy_threshold = 10
         audio = sr.Recognizer().listen(source)
     
     try:
@@ -88,6 +88,47 @@ def track_location():
     else:
         print("Location not found.")
 
+def hashpass():
+    target_hash = input("enter the hash : ")
+    i =0
+    while True:
+        input_str = str(i).encode('utf-8')
+        hashed_str = hashlib.md5(input_str).hexdigest()
+        if hashed_str == target_hash:
+            print("[+] hash found sucessfully")
+            print("input_str",input_str.decode('utf-8'))
+            print('Hash : ',hashed_str)
+            break
+        i += 1
+
+def satelight_comm():
+    ser = serial.Serial('/dev/ttyUSB0',9600,timeout=1)
+    time.sleep(5)
+    ser.write(b"AT&K0\r")
+    response = ser.readline().decode('utf-8')
+    print("Modem response:", response)
+    ser.write(b"AT+CREG?\r")
+    response = ser.readline().decode("utf-8")
+    print("Modem response: ", response)
+    ser.close()
+
+def artificial_gsm():
+    ser = serial.Serial('/dev/ttyUSB0',9600,timeout=1)
+    time.sleep(5)
+    ser.write(b"AT\r")
+    resoponse = ser.readline().decode(utf-8)
+    print("Modem response: " + resoponse)
+    ser.write(b"AT+CMGF=1\r")
+    response = ser.readline().decode(utf-8)
+    print("Modem response: " + response)
+    ser.write(b,'"AT+CMGS="+1234567890\r')
+    time.sleep(1)
+    ser.write(b'this is a test message from python!\r')
+    ser.write(bytes([26]))
+    response = ser.readline().decode('utf-8')
+    print("Modem response: " + response)
+    ser.close()
+
 if __name__ == "__main__":
     wishme()
     while True:
@@ -98,6 +139,9 @@ if __name__ == "__main__":
             query = query.replace("wikipedia","")
             results = wikipedia.sumary(query,sentences=2)
             speak(results)
+
+        elif "track a location" in query:
+            track_location()
 
         elif "hello jarvis" in query:
             speak("pleasure meeting you sir")
