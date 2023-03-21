@@ -7,8 +7,9 @@ import datetime
 import wikipedia
 import speech_recognition as sr
 import socket,smtplib
-import time
+import time, serial ,serialization
 from geopy.geocoders import Nominatim
+import string, random
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
@@ -53,12 +54,22 @@ def takecommand():
     return query
 
 def socket_conn_1():
-    socket1 = smtplib.SMTP('smtp.google.com',587)
+    socket1 = smtplib.SMTP('smtp.gmail.com',587)
     socket1.ehlo()
     socket1.starttls()
-    username1 = input("[+] enter your email : ")
-    passwd1 = input("[+] enter your password : ")
-    log1 = socket1.login(username1,passwd1)
+    username = input("[+] enter your email : ")
+    passwd = input("[+] enter your password : ")
+    socket1.login(username,passwd)
+
+def logingmail():
+    email = input("[+] enter your email : ")
+    password = input("[+] enter your password : ")
+    try:
+        a =socket_conn_1()
+        a.socket1.sendmail(email,email,password)
+        print("[+] mail sent sucessfully")
+    except Exception as e:
+        print(e)
 
 def hrcx():
     HOST = 'localhost'
@@ -116,12 +127,12 @@ def artificial_gsm():
     ser = serial.Serial('/dev/ttyUSB0',9600,timeout=1)
     time.sleep(5)
     ser.write(b"AT\r")
-    resoponse = ser.readline().decode(utf-8)
+    resoponse = ser.readline().decode('utf-8')
     print("Modem response: " + resoponse)
     ser.write(b"AT+CMGF=1\r")
-    response = ser.readline().decode(utf-8)
+    response = ser.readline().decode('utf-8')
     print("Modem response: " + response)
-    ser.write(b,'"AT+CMGS="+1234567890\r')
+    ser.write(b'"AT+CMGS="+1234567890\r')
     time.sleep(1)
     ser.write(b'this is a test message from python!\r')
     ser.write(bytes([26]))
@@ -129,8 +140,19 @@ def artificial_gsm():
     print("Modem response: " + response)
     ser.close()
 
+def passwd_generator():
+    def generate_password(length):
+        letters = string.ascii_letters + string.digits + string.punctuation
+        password = ''.join(random.choice(letters) for i in range(length))
+        return password
+
+    length = int(input("Enter the length of the password: "))
+    password = generate_password(length)
+    print("Your new password is:", password)
+
 if __name__ == "__main__":
     wishme()
+
     while True:
         query = takecommand().lower()
         
